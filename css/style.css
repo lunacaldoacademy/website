@@ -365,14 +365,26 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   to   { transform: scale(1.07); }
 }
 
-/* 写真の上に黒をかぶせて文字を読みやすくする */
+/* 文字がのる左側だけを暗くし、右側は写真をそのまま見せる */
 .hero__veil {
   position: absolute;
   inset: 0;
   z-index: 1;
   background:
-    linear-gradient(180deg, rgba(10,10,12,.86) 0%, rgba(10,10,12,.55) 38%, rgba(10,10,12,.94) 100%),
-    linear-gradient(100deg, rgba(10,10,12,.88) 0%, rgba(10,10,12,.35) 62%, rgba(10,10,12,.6) 100%);
+    linear-gradient(100deg,
+      rgba(10,10,12,.97) 0%,
+      rgba(10,10,12,.90) 26%,
+      rgba(10,10,12,.45) 52%,
+      rgba(10,10,12,.10) 76%,
+      rgba(10,10,12,.02) 100%),
+    linear-gradient(180deg, rgba(10,10,12,.55) 0%, transparent 26%, transparent 74%, rgba(10,10,12,.72) 100%);
+}
+/* 1カラムになる幅では文字が写真の上に重なるので、全体をやや暗くする */
+@media (max-width: 900px) {
+  .hero__veil {
+    background:
+      linear-gradient(180deg, rgba(10,10,12,.72) 0%, rgba(10,10,12,.46) 34%, rgba(10,10,12,.90) 78%, var(--ink) 100%);
+  }
 }
 .hero__grid {
   position: absolute;
@@ -597,18 +609,14 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   transition: transform .8s var(--ease);
 }
 .course:hover .course__thumb img { transform: scale(1.06); }
-.course__thumb::after {
-  content: "";
-  position: absolute; inset: 0;
-  background: linear-gradient(180deg, transparent 45%, rgba(10, 10, 12, .8) 100%);
-}
+/* 画像はそのままの明るさで見せ、名前は画像の下に置く */
 .course__name {
-  position: absolute;
-  left: var(--s-4); bottom: var(--s-3);
-  z-index: 1;
   font-size: var(--ts-h3);
   font-weight: 600;
   letter-spacing: .1em;
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
+  border-bottom: 1px solid var(--line-soft);
 }
 .course__body { padding: var(--s-5); flex: 1; display: flex; flex-direction: column; }
 .course__desc { font-size: var(--ts-small); color: var(--text-2); }
@@ -631,7 +639,6 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .pcskill__photo img {
   width: 100%;
   border-radius: 2px;
-  filter: saturate(.85) contrast(1.05);
 }
 .pcskill__list { display: grid; gap: var(--s-4); }
 .pcskill__list > li {
@@ -739,58 +746,9 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 }
 .gallery__item img {
   width: 100%; height: 100%; object-fit: cover;
-  filter: grayscale(.35) brightness(.7);
-  transition: filter .6s var(--ease), transform .8s var(--ease);
+  transition: transform .8s var(--ease);
 }
-.gallery__item:hover img { filter: none; transform: scale(1.05); }
-
-/* -------------------------------------------------------------
-   13. 料金
-   ------------------------------------------------------------- */
-.fee { display: grid; gap: clamp(1.5rem, 5vw, 2.5rem); }
-@media (min-width: 860px) { .fee { grid-template-columns: 1fr 1fr; } }
-.fee__block {
-  border: 1px solid var(--line-soft);
-  border-radius: 2px;
-  background: var(--surface);
-  padding: clamp(1.5rem, 4vw, 2.25rem);
-}
-.fee__block h3 {
-  font-size: var(--ts-small);
-  letter-spacing: .16em;
-  color: var(--gold);
-  padding-bottom: var(--s-3);
-  border-bottom: 1px solid var(--line-soft);
-  margin-bottom: var(--s-4);
-}
-.fee__row {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: var(--s-4);
-  padding-block: var(--s-3);
-}
-.fee__row + .fee__row { border-top: 1px dashed var(--line-soft); }
-.fee__k { flex: none; }
-.fee__v {
-  font-family: var(--font-en);
-  font-size: clamp(1.1rem, 3.4vw, 1.45rem);
-  letter-spacing: .03em;
-  text-align: right;
-}
-.fee__v small {
-  font-family: var(--font);
-  font-size: .58em;
-  color: var(--muted);
-  margin-left: .35em;
-  letter-spacing: .06em;
-}
-.fee__note {
-  margin-top: var(--s-5);
-  font-size: var(--ts-tiny);
-  color: var(--muted);
-  text-align: center;
-}
+.gallery__item:hover img { transform: scale(1.05); }
 
 /* -------------------------------------------------------------
    14. 代表あいさつ
@@ -801,7 +759,6 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .ceo__photo img {
   width: 100%;
   border-radius: 2px;
-  filter: saturate(.9);
 }
 .ceo__photo::after {
   content: "";
@@ -863,10 +820,9 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 }
 .campus__map {
   margin-top: auto;
-  border: 1px solid var(--line-soft);
+  border: 1px solid var(--line);
   border-radius: 2px;
   overflow: hidden;
-  filter: grayscale(1) invert(.92) contrast(.9);
 }
 .campus__map iframe { width: 100%; height: 220px; border: 0; display: block; }
 
@@ -928,7 +884,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   position: absolute;
   inset: 0;
   z-index: 0;
-  opacity: .16;
+  opacity: .30;
 }
 .trial__bg img { width: 100%; height: 100%; object-fit: cover; }
 .trial__veil {
