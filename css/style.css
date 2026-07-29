@@ -54,6 +54,7 @@
   --font-en: "Helvetica Neue", Arial, "Hiragino Sans", sans-serif;
 
   --ease: cubic-bezier(.22, 1, .36, 1);
+  --ease-soft: cubic-bezier(.4, 0, .2, 1);   /* ゆっくり始まってゆっくり止まる */
 }
 
 /* -------------------------------------------------------------
@@ -266,7 +267,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
   flex: none;
 }
 .header__mark {
-  width: 34px; height: 34px;
+  width: 42px; height: 42px;
   object-fit: contain;
   transition: transform .5s var(--ease);
 }
@@ -355,15 +356,14 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 /* JSがなければ切り替えられないので1枚目だけ出す */
 html:not(.js) .hero__slide:not(.is-current) { display: none; }
-.js .hero__slide { opacity: 0; transition: opacity 1.4s var(--ease); }
-.js .hero__slide.is-current { opacity: 1; }
-
-/* ゆっくり寄っていく（現在のスライドだけ） */
-.js .hero__slide.is-current img { animation: kenburns 9s linear both; }
-@keyframes kenburns {
-  from { transform: scale(1.0); }
-  to   { transform: scale(1.07); }
+/* ふわっと入れ替わる：透明度と、わずかな拡大をゆっくり戻す動きを重ねる */
+.js .hero__slide {
+  opacity: 0;
+  transform: scale(1.05);
+  transition: opacity 1.8s var(--ease-soft), transform 3s var(--ease-soft);
+  will-change: opacity, transform;
 }
+.js .hero__slide.is-current { opacity: 1; transform: scale(1); }
 
 /* 文字がのる左側だけを暗くし、右側は写真をそのまま見せる */
 .hero__veil {
@@ -886,7 +886,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 }
 @media (min-width: 800px) { .footer__top { grid-template-columns: 1.3fr 1fr; align-items: start; } }
 .footer__brand { display: flex; align-items: center; gap: var(--s-4); margin-bottom: var(--s-4); }
-.footer__mark { width: 52px; height: 52px; object-fit: contain; }
+.footer__mark { width: 72px; height: 72px; object-fit: contain; }
 .footer__name { font-size: var(--ts-h3); letter-spacing: .16em; font-weight: 600; }
 .footer__name small {
   display: block;
@@ -1040,9 +1040,8 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
     transition: none !important;
     animation: none !important;
   }
-  /* スライドは切り替わり続けるが、フェードと寄りは行わない */
-  .js .hero__slide { transition: none !important; }
-  .js .hero__slide.is-current img { animation: none !important; }
+  /* スライドは切り替わり続けるが、フェードと拡大は行わない */
+  .js .hero__slide { transition: none !important; transform: none !important; }
   .gallery__track,
   .js .triad__ring { animation: none !important; }
   .btn, .course, .campus, .apps > li, .concepts > li, .future > li { transition: none; }
