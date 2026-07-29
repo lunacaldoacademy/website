@@ -34,6 +34,10 @@ python tools/optimize_images.py
 
 `../パンフレット/assets/` は読み取るだけで、書き換えません。
 
+`img/` には現在ページで使っていない予備のイラストも入っています
+（`classroom` / `kid-smile` / `minecraft` / `map.svg`）。
+セクションを追加するときにそのまま `<picture>` で差し込めます。
+
 ## GitHub Pages への公開
 
 初回のみ:
