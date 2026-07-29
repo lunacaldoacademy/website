@@ -219,7 +219,7 @@ ul, ol { margin: 0; padding: 0; list-style: none; }
 
 .btn--gold { background: transparent; color: var(--gold-lt); border-color: var(--gold); }
 .btn--gold::before { background: var(--gold); }
-.btn--gold:hover { color: var(--ink); }
+.btn--gold:hover { color: #fff; }
 
 .btn--line { background: transparent; color: var(--text); border-color: var(--line); }
 .btn--line::before { background: rgba(242, 240, 236, .1); }

@@ -262,26 +262,25 @@ def cut_out_background(img: Image.Image) -> Image.Image:
 
 
 def export_logo() -> Image.Image | None:
-    """白背景を透過にし、余白を詰めたロゴを書き出す。"""
+    """ロゴを白背景のまま書き出す（余白を詰める）。"""
     if not LOGO_SRC.exists():
         print("  [skip] ロゴが見つかりません:", LOGO_SRC)
         return None
-    img = cut_out_background(Image.open(LOGO_SRC))
-    bbox = img.getchannel("A").getbbox()      # 透明な余白を切り落とす
-    if bbox:
-        img = img.crop(bbox)
-    fit(img, 600).save(OUT / "logo.png", "PNG", optimize=True)
+    img = Image.open(LOGO_SRC).convert("RGB")
+    img = fit(img, 600)
+    img.save(OUT / "logo.png", "PNG", optimize=True)
     print(f"  logo.png: {img.size[0]}x{img.size[1]} "
           f"{(OUT / 'logo.png').stat().st_size // 1024}KB")
     return img
 
 
 def export_favicon(logo: Image.Image) -> None:
-    """余白を詰めたロゴを正方形の黒地に置いてファビコンにする。"""
+    """ロゴを正方形の黒地に置いてファビコンにする。"""
     pad = round(max(logo.size) * 0.08)
     side = max(logo.size) + pad * 2
-    canvas = Image.new("RGBA", (side, side), (*C_INK, 255))
-    canvas.paste(logo, ((side - logo.width) // 2, (side - logo.height) // 2), logo)
+    canvas = Image.new("RGB", (side, side), C_INK)
+    logo_rgb = logo.convert("RGB") if logo.mode != "RGB" else logo
+    canvas.paste(logo_rgb, ((side - logo.width) // 2, (side - logo.height) // 2))
     canvas.resize((180, 180), Image.LANCZOS).save(OUT / "favicon.png", "PNG", optimize=True)
     print("  favicon.png: 180x180")
 
