@@ -104,48 +104,7 @@
   }
 
   /* -----------------------------------------------------------
-     3. 数字のカウントアップ
-     HTMLには最初から最終値が入っているので、JSが動かなくても正しく読める
-     ----------------------------------------------------------- */
-  var counters = document.querySelectorAll('[data-count]');
-
-  function renderCount(el, value) {
-    var suffix = el.getAttribute('data-suffix');
-    el.innerHTML = String(value) + (suffix ? '<small>' + suffix + '</small>' : '');
-  }
-
-  function runCount(el) {
-    var goal = parseInt(el.getAttribute('data-count'), 10);
-    if (isNaN(goal)) return;
-    var duration = 1100;
-    var start = null;
-
-    function tick(now) {
-      if (start === null) start = now;
-      var p = Math.min((now - start) / duration, 1);
-      // ease-out（終わりにかけてゆっくり）
-      var eased = 1 - Math.pow(1 - p, 3);
-      renderCount(el, Math.round(goal * eased));
-      if (p < 1) requestAnimationFrame(tick);
-    }
-    renderCount(el, 0);
-    requestAnimationFrame(tick);
-  }
-
-  if (counters.length && !reduceMotion && hasIO) {
-    var countObserver = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) return;
-        runCount(entry.target);
-        countObserver.unobserve(entry.target);
-      });
-    }, { threshold: 0.6 });
-
-    each(counters, function (el) { countObserver.observe(el); });
-  }
-
-  /* -----------------------------------------------------------
-     4. FAQ は1つ開いたら他を閉じる
+     3. FAQ は1つ開いたら他を閉じる
      ----------------------------------------------------------- */
   var faqItems = document.querySelectorAll('.faq details');
   each(faqItems, function (item) {
@@ -158,7 +117,7 @@
   });
 
   /* -----------------------------------------------------------
-     5. 現在地に応じてヘッダーナビをハイライト
+     4. 現在地に応じてヘッダーナビをハイライト
      ----------------------------------------------------------- */
   var navLinks = document.querySelectorAll('.header__nav a[href^="#"]');
   var navPairs = [];
@@ -180,7 +139,7 @@
   }
 
   /* -----------------------------------------------------------
-     6. スクロールに応じた追従UI
+     5. スクロールに応じた追従UI
         - ヘッダーの影と進捗バー
         - スマホ下部CTA（ヒーローを過ぎたら出す）
         - トップへ戻るボタン
