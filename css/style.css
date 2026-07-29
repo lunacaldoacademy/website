@@ -391,12 +391,60 @@ ul { margin: 0; padding: 0; list-style: none; }
 .hero__note { margin-top: var(--s-4); font-size: var(--ts-small); color: var(--c-ink-60); }
 
 .hero__figure { position: relative; }
-.hero__figure img {
-  width: 100%;
+
+/* --- トップ画像のスライドショー --- */
+.hero__slider {
+  position: relative;
+  aspect-ratio: 4 / 3;
   border-radius: var(--r-4);
   border: 4px solid var(--c-paper);
   box-shadow: var(--shadow-2);
+  overflow: hidden;
+  background: var(--c-yellow-bg);
 }
+.hero__slide { margin: 0; }
+.hero__slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+/* JSがなければ切り替えられないので、1枚目だけを出す */
+html:not(.js) .hero__slide:not(.is-current) { display: none; }
+/* JSがあるときは全部を重ねて、不透明度でクロスフェードする */
+.js .hero__slider .hero__slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1s var(--ease-out);
+}
+.js .hero__slider .hero__slide.is-current { opacity: 1; }
+
+/* 何枚目を見ているかを示す点 */
+.hero__dots {
+  position: absolute;
+  left: 50%;
+  bottom: var(--s-3);
+  transform: translateX(-50%);
+  display: flex;
+  gap: var(--s-2);
+  padding: var(--s-1) var(--s-2);
+  border-radius: var(--r-pill);
+  background: rgba(26, 26, 26, .38);
+  backdrop-filter: blur(4px);
+}
+.hero__dot {
+  width: 10px;
+  height: 10px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .55);
+  cursor: pointer;
+  transition: background .3s ease, transform .3s var(--ease-out);
+}
+.hero__dot:hover { background: rgba(255, 255, 255, .85); }
+.hero__dot[aria-current="true"] { background: var(--c-yellow); transform: scale(1.25); }
 .hero__stamp {
   position: absolute;
   right: -.5rem; bottom: -1rem;
@@ -1043,6 +1091,7 @@ ul { margin: 0; padding: 0; list-style: none; }
   .hero__stamp,
   .hero__badge::before,
   .gallery__track { animation: none !important; }
+  .js .hero__slider .hero__slide { transition: none !important; }
   .btn, .course, .step, .benefit, .parents__card, .chip, .skills__grid li { transition: none; }
   .btn::after { display: none; }
   .sticky-cta, .to-top { transition: none; }

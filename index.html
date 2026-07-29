@@ -213,11 +213,28 @@ setTimeout(function () {
     </div>
 
     <div class="hero__figure">
-      <picture>
-        <source srcset="img/hero-kid-laptop.webp" type="image/webp">
-        <img src="img/hero-kid-laptop.jpg" width="1024" height="1024"
-             alt="ノートパソコンでブロックを並べてプログラミングをする小学生のイラスト" fetchpriority="high">
-      </picture>
+      <div class="hero__slider" data-interval="5000">
+        <!-- HERO-SLIDES:START ここから img-src/hero/ をもとに tools/optimize_images.py が自動生成します。手で書き換えないでください -->
+        <figure class="hero__slide is-current">
+          <picture>
+            <source srcset="img/hero-01.webp" type="image/webp">
+            <img src="img/hero-01.jpg" width="1200" height="900" alt="パソコンに向かう子ども" fetchpriority="high">
+          </picture>
+        </figure>
+        <figure class="hero__slide">
+          <picture>
+            <source srcset="img/hero-02.webp" type="image/webp">
+            <img src="img/hero-02.jpg" width="1200" height="900" alt="レッスンの様子" loading="lazy">
+          </picture>
+        </figure>
+        <figure class="hero__slide">
+          <picture>
+            <source srcset="img/hero-03.webp" type="image/webp">
+            <img src="img/hero-03.jpg" width="1200" height="900" alt="マインクラフトで世界をつくる" loading="lazy">
+          </picture>
+        </figure>
+        <!-- HERO-SLIDES:END -->
+      </div>
       <div class="hero__stamp" aria-hidden="true">
         <b>無料</b><span>体験会<br>受付中</span>
       </div>

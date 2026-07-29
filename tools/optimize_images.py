@@ -1,36 +1,56 @@
 """ルナカルドアカデミー 公式サイト用 画像最適化スクリプト
 
-パンフレット/assets/ の素材を読み取り、Web配信用に軽量化して HP/img/ に出力する。
-元素材（パンフレット側）には一切書き込まない。
+2つの素材置き場を読み取り、Web配信用に軽量化して HP/img/ に出力する。
+
+  1. img-src/hero/        … トップのスライドショー画像（ユーザーが差し替える場所）
+  2. ../パンフレット/assets/ … ロゴ・コースイラスト等（読み取りのみ。書き込まない）
+
+トップ画像は img-src/hero/ の中身に合わせて index.html のスライド部分も自動で書き換える。
 
 使い方:
     python tools/optimize_images.py
 
 出力:
-    HP/img/*.webp   … 主力（写真調イラスト）
-    HP/img/*.jpg    … WebP非対応ブラウザ向けフォールバック
-    HP/img/*.svg    … コースアイコン等（無変換コピー）
+    HP/img/hero-01.webp / .jpg …  トップのスライド（ファイル名順）
+    HP/img/*.webp / *.jpg       … その他の写真イラスト
+    HP/img/*.svg                … コースアイコン等（無変換コピー）
     HP/img/logo.png / favicon.png / ogp.png
 """
 from __future__ import annotations
 
+import re
 import shutil
+import unicodedata
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
 
+# iPhoneのHEICも読めるようにする（入っていなければ黙って諦める）
+try:
+    import pillow_heif
+
+    pillow_heif.register_heif_opener()
+    HEIF_OK = True
+except ImportError:
+    HEIF_OK = False
+
 HERE = Path(__file__).resolve().parent
 HP = HERE.parent
 SRC = HP.parent / "パンフレット" / "assets"
+HERO_SRC = HP / "img-src" / "hero"
 OUT = HP / "img"
+INDEX = HP / "index.html"
 
 MAX_EDGE = 1200          # 写真の長辺上限
 WEBP_QUALITY = 82
 JPEG_QUALITY = 85
 
+# トップのスライド。4:3 に切り抜いて統一する
+HERO_W, HERO_H = 1200, 900
+HERO_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
+
 # パンフレット素材名 -> サイト側での名前
 PHOTOS = {
-    "photo_kid_laptop.png": "hero-kid-laptop",
     "photo_kid_smile.png": "kid-smile",
     "photo_classroom.png": "classroom",
     "photo_minecraft.png": "minecraft",
@@ -107,6 +127,120 @@ def export_photos() -> None:
             f"  {stem}: {img.size[0]}x{img.size[1]} "
             f"webp {webp.stat().st_size // 1024}KB / jpg {jpg.stat().st_size // 1024}KB"
         )
+
+
+def crop_cover(img: Image.Image, w: int, h: int) -> Image.Image:
+    """中央基準で w:h の比率に切り抜き、w×h にそろえる（object-fit: cover 相当）。"""
+    src_ratio = img.width / img.height
+    dst_ratio = w / h
+    if src_ratio > dst_ratio:                    # 元のほうが横長 -> 左右を削る
+        new_w = round(img.height * dst_ratio)
+        left = (img.width - new_w) // 2
+        img = img.crop((left, 0, left + new_w, img.height))
+    elif src_ratio < dst_ratio:                  # 元のほうが縦長 -> 上下を削る
+        new_h = round(img.width / dst_ratio)
+        top = (img.height - new_h) // 2
+        img = img.crop((0, top, img.width, top + new_h))
+    return img.resize((w, h), Image.LANCZOS)
+
+
+def alt_from_filename(path: Path) -> str:
+    """`01_パソコンに向かう子ども.jpg` -> `パソコンに向かう子ども`"""
+    stem = path.stem
+    if "_" in stem:
+        stem = stem.split("_", 1)[1]
+    stem = stem.strip()
+    return stem or "ルナカルドアカデミーのレッスンの様子"
+
+
+def escape_html(s: str) -> str:
+    return (s.replace("&", "&amp;").replace("<", "&lt;")
+             .replace(">", "&gt;").replace('"', "&quot;"))
+
+
+def collect_hero_sources() -> list[Path]:
+    if not HERO_SRC.exists():
+        return []
+    files, skipped = [], []
+    for f in sorted(HERO_SRC.iterdir(), key=lambda p: unicodedata.normalize("NFC", p.name)):
+        if not f.is_file():
+            continue
+        ext = f.suffix.lower()
+        if ext not in HERO_EXTS:
+            continue
+        if ext in (".heic", ".heif") and not HEIF_OK:
+            skipped.append(f.name)
+            continue
+        files.append(f)
+    if skipped:
+        print("  [注意] HEIC形式のため読み込めませんでした:", ", ".join(skipped))
+        print("         `pip install pillow-heif` を一度実行すると読めるようになります")
+    return files
+
+
+def export_hero() -> list[dict]:
+    """img-src/hero/ をトップのスライド用に書き出し、スライド情報を返す。"""
+    sources = collect_hero_sources()
+    if not sources:
+        print("  [skip] img-src/hero/ に画像がありません。トップ画像は変更しません")
+        return []
+
+    # 前回の書き出しを消してから作り直す（減らしたときに残骸が出ないように）
+    for old in OUT.glob("hero-*.webp"):
+        old.unlink()
+    for old in OUT.glob("hero-*.jpg"):
+        old.unlink()
+
+    slides = []
+    for i, src in enumerate(sources, start=1):
+        img = crop_cover(flatten(Image.open(src)), HERO_W, HERO_H)
+        stem = f"hero-{i:02d}"
+        webp = OUT / f"{stem}.webp"
+        jpg = OUT / f"{stem}.jpg"
+        img.save(webp, "WEBP", quality=WEBP_QUALITY, method=6)
+        img.save(jpg, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
+        slides.append({"stem": stem, "alt": alt_from_filename(src)})
+        print(f"  {stem}: {src.name} -> webp {webp.stat().st_size // 1024}KB "
+              f"/ jpg {jpg.stat().st_size // 1024}KB")
+    return slides
+
+
+def update_hero_slides(slides: list[dict]) -> None:
+    """index.html のスライド部分（マーカーの間）を書き換える。"""
+    if not slides:
+        return
+    if not INDEX.exists():
+        print("  [skip] index.html が見つかりません")
+        return
+
+    start = "<!-- HERO-SLIDES:START"
+    end = "<!-- HERO-SLIDES:END -->"
+    html = INDEX.read_text(encoding="utf-8")
+    pattern = re.compile(re.escape(start) + r".*?" + re.escape(end), re.S)
+    if not pattern.search(html):
+        print("  [skip] index.html にスライドのマーカーが見つかりません")
+        return
+
+    lines = [start + " ここから img-src/hero/ をもとに tools/optimize_images.py が"
+                     "自動生成します。手で書き換えないでください -->"]
+    for i, s in enumerate(slides):
+        current = " is-current" if i == 0 else ""
+        # 1枚目だけ先に読み込み、2枚目以降は後回しにして表示を速くする
+        loading = ' fetchpriority="high"' if i == 0 else ' loading="lazy"'
+        alt = escape_html(s["alt"])
+        lines += [
+            f'        <figure class="hero__slide{current}">',
+            '          <picture>',
+            f'            <source srcset="img/{s["stem"]}.webp" type="image/webp">',
+            f'            <img src="img/{s["stem"]}.jpg" width="{HERO_W}" height="{HERO_H}"'
+            f' alt="{alt}"{loading}>',
+            '          </picture>',
+            '        </figure>',
+        ]
+    lines.append("        " + end)
+
+    INDEX.write_text(pattern.sub("\n".join(lines), html), encoding="utf-8")
+    print(f"  index.html のスライドを {len(slides)} 枚に更新しました")
 
 
 def export_svgs() -> None:
@@ -225,7 +359,9 @@ def main() -> None:
         raise SystemExit(f"素材フォルダが見つかりません: {SRC}")
     OUT.mkdir(parents=True, exist_ok=True)
 
-    print("写真イラスト:")
+    print("トップのスライド:")
+    update_hero_slides(export_hero())
+    print("その他の写真イラスト:")
     export_photos()
     print("SVG:")
     export_svgs()
