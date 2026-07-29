@@ -9,11 +9,41 @@
 |---|---|
 | `index.html` | ページ本体。**文章の修正はここだけ** |
 | `css/style.css` | 色・余白・レイアウト |
-| `js/main.js` | スクロール表示・FAQ開閉・ナビのハイライト |
+| `js/main.js` | スクロール表示・数字のカウントアップ・FAQ開閉・追従UI |
 | `img/` | 画像一式（`tools/optimize_images.py` の出力） |
 | `tools/optimize_images.py` | `../パンフレット/assets/` の素材をWeb用に軽量化するスクリプト |
 | `sitemap.xml` / `robots.txt` | 検索エンジン向け |
 | `.nojekyll` | GitHub Pages の Jekyll 処理を無効化 |
+
+## ページの構成
+
+上から順に、ヒーロー → 数字で見る → 教室の想い → 3つのステップ → 4コース →
+作品イメージ → 身につく力 → 受講料金 → 保護者の方へ → よくあるご質問 →
+アクセス → 無料体験会 → フッター。
+
+## 動き（アニメーション）について
+
+すべてCSSとバニラJSで実装しています。ライブラリは使っていません。
+
+| 動き | 実装場所 |
+|---|---|
+| ヒーローの要素が順に浮かび上がる | `style.css` の `@keyframes rise`（CSSのみ） |
+| 背景の色ブロックがゆっくり漂う | `@keyframes float` ／ `.hero__deco` |
+| 「無料体験会 受付中」の点が脈打つ | `@keyframes pulse` |
+| スクロールで各ブロックが出現 | `.reveal` `.stagger` ＋ `main.js` の IntersectionObserver |
+| 数字が0からカウントアップ | `data-count` 属性 ＋ `main.js` |
+| 作品イメージが自動で横に流れる | `@keyframes marquee`（マウスを乗せると一時停止） |
+| カード類のホバーで浮き上がる | `.course` `.step` `.benefit` などの `:hover` |
+| ヘッダーの進捗バー・影 | `main.js` のスクロール監視 |
+| スマホ下部CTA／トップへ戻るの出し入れ | 同上 |
+
+**動きを止める配慮:**
+
+- OSの「視差効果を減らす／アニメーションを減らす」設定（`prefers-reduced-motion`）が
+  オンのときは、すべての動きを止めて静止した状態で表示します
+- JavaScriptが読み込めなかった場合は、4秒後に `<html>` の `js` クラスを外し、
+  全内容を最初から表示された状態に戻します（`index.html` 冒頭のスクリプト）。
+  そのため、動きが消えても内容が読めなくなることはありません
 
 ## ローカルで確認する
 
@@ -35,8 +65,7 @@ python tools/optimize_images.py
 `../パンフレット/assets/` は読み取るだけで、書き換えません。
 
 `img/` には現在ページで使っていない予備のイラストも入っています
-（`classroom` / `kid-smile` / `minecraft` / `map.svg`）。
-セクションを追加するときにそのまま `<picture>` で差し込めます。
+（`kid-smile` / `map.svg`）。セクションを追加するときにそのまま差し込めます。
 
 ## GitHub Pages への公開
 
@@ -75,6 +104,8 @@ git add . && git commit -m "内容を更新" && git push
 | よくあるご質問 | `<section id="faq">` の `<details>`。**同じ内容を `<head>` の FAQPage 構造化データにも反映すること** |
 | 電話番号・メール | `tel:` / `mailto:` のリンク（ヘッダー・アクセス・体験会・フッター・固定CTAの5箇所）と `<head>` の構造化データ |
 | 生徒・保護者の声 | `<figure class="voice">` |
+| 数字（500以上・4・9・90分） | `<section class="stats">` の `data-count` と表示値の**両方**を直す |
+| 作品イメージの並び | `<div class="gallery__track">`。**同じ並びを2回**書くことで途切れず流れるので、増減は必ず前半・後半の両方に反映する |
 
 ## ブランド表現ルール（編集時に必ず守る）
 

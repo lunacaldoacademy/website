@@ -10,7 +10,14 @@
 <link rel="icon" href="img/favicon.png" sizes="180x180">
 <link rel="apple-touch-icon" href="img/favicon.png">
 <link rel="stylesheet" href="css/style.css">
-<script>document.documentElement.classList.add('js');</script>
+<script>
+/* JSが有効な間だけスクロール演出を有効にする。
+   万一 main.js が読み込めなかったときは .js を外し、全内容を素のまま表示する。 */
+document.documentElement.classList.add('js');
+setTimeout(function () {
+  if (!window.__lcaReady) document.documentElement.classList.remove('js');
+}, 4000);
+</script>
 
 <!-- OGP -->
 <meta property="og:type" content="website">
@@ -139,6 +146,9 @@
     <symbol id="ico-mail" viewBox="0 0 24 24">
       <path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zm9 8L4.2 7.2 4 7v.6l8 5.9 8-5.9V7l-.2.2z" fill="currentColor"/>
     </symbol>
+    <symbol id="ico-arrow-up" viewBox="0 0 24 24">
+      <path d="M12 4l8 8-1.6 1.6L13 8.2V20h-2V8.2L5.6 13.6 4 12z" fill="currentColor"/>
+    </symbol>
     <symbol id="ico-ig" viewBox="0 0 24 24">
       <path d="M12 2.2c3.2 0 3.6 0 4.9.07 1.2.05 1.8.25 2.2.42.6.22 1 .48 1.4.9.43.43.7.83.9 1.4.18.44.38 1.05.43 2.24.06 1.28.07 1.66.07 4.88s-.01 3.6-.07 4.88c-.05 1.19-.25 1.8-.42 2.24-.22.57-.48.97-.9 1.4-.43.42-.83.68-1.4.9-.44.17-1.05.37-2.24.42-1.28.06-1.66.07-4.88.07s-3.6-.01-4.88-.07c-1.19-.05-1.8-.25-2.24-.42a3.9 3.9 0 0 1-1.4-.9 3.9 3.9 0 0 1-.9-1.4c-.17-.44-.37-1.05-.42-2.24C2.21 15.6 2.2 15.22 2.2 12s.01-3.6.07-4.88c.05-1.19.25-1.8.42-2.24.22-.57.48-.97.9-1.4.43-.42.83-.68 1.4-.9.44-.17 1.05-.37 2.24-.42C8.4 2.21 8.78 2.2 12 2.2zm0 3.2a6.6 6.6 0 1 0 0 13.2 6.6 6.6 0 0 0 0-13.2zm0 2.3a4.3 4.3 0 1 1 0 8.6 4.3 4.3 0 0 1 0-8.6zm6.9-2.6a1.55 1.55 0 1 1-3.1 0 1.55 1.55 0 0 1 3.1 0z" fill="currentColor"/>
     </symbol>
@@ -160,6 +170,7 @@
       <a href="#trial" class="is-cta">無料体験</a>
     </nav>
   </div>
+  <div class="header__progress" aria-hidden="true"></div>
 </header>
 
 
@@ -167,6 +178,9 @@
 
 <!-- ===== 1. ヒーロー ===== -->
 <section class="hero" id="top">
+  <div class="hero__deco" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
   <div class="wrap hero__inner">
     <div class="hero__copy">
       <span class="hero__badge">無料体験会 受付中</span>
@@ -212,22 +226,47 @@
 </section>
 
 
-<!-- ===== 2. 教室の想い ===== -->
+<!-- ===== 2. 数字で見るルナカルドアカデミー ===== -->
+<section class="stats" aria-label="数字で見るルナカルドアカデミー">
+  <div class="wrap">
+    <ul class="stats__grid stagger">
+      <li>
+        <span class="stat__num" data-count="500" data-suffix="以上">500<small>以上</small></span>
+        <span class="stat__label">取り組めるミッション</span>
+      </li>
+      <li>
+        <span class="stat__num" data-count="4">4</span>
+        <span class="stat__label">選べるコース</span>
+      </li>
+      <li>
+        <span class="stat__num" data-count="9">9</span>
+        <span class="stat__label">身につく基礎スキル</span>
+      </li>
+      <li>
+        <span class="stat__num" data-count="90" data-suffix="分">90<small>分</small></span>
+        <span class="stat__label">1回のレッスン時間</span>
+      </li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ===== 3. 教室の想い ===== -->
 <section class="section" id="about">
   <div class="wrap">
     <div class="section__head reveal">
       <span class="section__en">OUR PHILOSOPHY</span>
       <h2 class="section__title">ゼロから<span class="mk-y">つくるプログラミング</span>で、<br>将来役立つ<span class="t-pink">発想力</span>＋<span class="t-pink">実現力</span>を</h2>
     </div>
-    <div class="msg reveal">
-      <div class="msg__photo">
+    <div class="msg">
+      <div class="msg__photo reveal" data-reveal="left">
         <picture>
           <source srcset="img/msg.webp" type="image/webp">
           <img src="img/msg.jpg" width="800" height="1200" loading="lazy"
                alt="パソコンに向かって笑顔で学ぶ子どものイラスト">
         </picture>
       </div>
-      <div class="msg__body">
+      <div class="msg__body reveal" data-reveal="right">
         <p>いま、プログラミングスクールでは流行のゲームを題材にした学びが主流です。たしかに、楽しさや取っつきやすさがあります。</p>
         <p>そんななか、わたしがルナカルドアカデミーで大切にしているのは、<strong>&ldquo;ゼロからオリジナルのマイゲームをつくる&rdquo;</strong> ことにこだわったカリキュラム構成です。</p>
         <p>何もないところからアイデアを出し、課題を見つけ、プログラミングを通して形にしていく。その &ldquo;プロセス&rdquo; こそが、プログラミング教育にとって何よりも大切だと考えるからです。</p>
@@ -237,7 +276,47 @@
 </section>
 
 
-<!-- ===== 3. コース ===== -->
+<!-- ===== 4. ゼロからつくる3ステップ ===== -->
+<section class="section section--pink cut-b" id="steps">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <span class="section__en">3 STEPS</span>
+      <h2 class="section__title">「どうしたらいいと思う？」から<br>はじまる3つのステップ</h2>
+      <p class="section__lead">答えを先に教えるのではなく、お子さま自身が考えて進める順番を大切にしています。</p>
+    </div>
+
+    <ol class="steps stagger">
+      <li class="step">
+        <div class="step__num">01</div>
+        <div class="step__body">
+          <h3>思いつく</h3>
+          <p>「こんなゲームがあったら楽しそう」。何もないところから、つくりたいものを言葉にするところから始めます。</p>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step__num">02</div>
+        <div class="step__body">
+          <h3>つくって、試す</h3>
+          <p>思いどおりに動かないところで「なぜだろう」と考える。うまくいくまで直して試す時間が、いちばん力になります。</p>
+        </div>
+      </li>
+      <li class="step">
+        <div class="step__num">03</div>
+        <div class="step__body">
+          <h3>伝える</h3>
+          <p>できあがった作品をみんなに見せて、工夫したところを自分の言葉で説明します。つくる力と伝える力が一緒に育ちます。</p>
+        </div>
+      </li>
+    </ol>
+
+    <p class="steps__closing reveal">
+      <span class="box">発想力</span>と<span class="box">実現力</span>が、くり返すほど深まります。
+    </p>
+  </div>
+</section>
+
+
+<!-- ===== 5. コース ===== -->
 <section class="section section--cream" id="courses">
   <div class="wrap">
     <div class="section__head reveal">
@@ -246,7 +325,7 @@
       <p class="section__lead">興味の入口はひとつではありません。お子さまが夢中になれるジャンルから始められます。</p>
     </div>
 
-    <ul class="courses reveal">
+    <ul class="courses stagger">
       <li class="course course--scratch">
         <div class="course__thumb"><img src="img/course-scratch.svg" alt="" width="200" height="125" loading="lazy"></div>
         <div class="course__body">
@@ -290,7 +369,84 @@
 </section>
 
 
-<!-- ===== 4. 身につく力 ===== -->
+<!-- ===== 6. 作品イメージ（自動で流れる） ===== -->
+<section class="section gallery" aria-label="授業で取り組む題材のイメージ">
+  <div class="wrap">
+    <div class="section__head reveal">
+      <span class="section__en">WORKS</span>
+      <h2 class="section__title">こんな作品づくりに取り組みます</h2>
+      <p class="section__lead">ジャンルの違う題材が並ぶので、お子さまの「好き」から入っていけます。</p>
+    </div>
+  </div>
+
+  <div class="gallery__track">
+    <!-- 同じ並びを2回繰り返して、途切れずに流れるようにしています -->
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-scratch.svg" alt="Scratchで作るゲーム画面のイメージ" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">Scratch のゲーム</p>
+    </div>
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/minecraft.webp" alt="Minecraft教育版での建築とプログラミングのイメージ" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">Minecraft の自動装置</p>
+    </div>
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-roblox.svg" alt="ロブロックスの3Dゲーム画面のイメージ" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">ロブロックスの3D作品</p>
+    </div>
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-pcgen.svg" alt="Word・Excel・PowerPointなどPC総合コースのイメージ" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">PC総合の資料づくり</p>
+    </div>
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-minecraft.svg" alt="ブロックを積み上げて仕組みを作るイメージ" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">仕組みを組み立てる</p>
+    </div>
+    <div class="screen">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/classroom.webp" alt="教室でパソコンに向かう子どもたちのイラスト" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">レッスンの様子</p>
+    </div>
+
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-scratch.svg" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">Scratch のゲーム</p>
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/minecraft.webp" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">Minecraft の自動装置</p>
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-roblox.svg" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">ロブロックスの3D作品</p>
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-pcgen.svg" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">PC総合の資料づくり</p>
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/course-minecraft.svg" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">仕組みを組み立てる</p>
+    </div>
+    <div class="screen" aria-hidden="true">
+      <div class="screen__frame"><div class="screen__inner"><img src="img/classroom.webp" alt="" width="240" height="180" loading="lazy"></div></div>
+      <div class="screen__base"></div>
+      <p class="screen__cap">レッスンの様子</p>
+    </div>
+  </div>
+</section>
+
+
+<!-- ===== 7. 身につく力 ===== -->
 <section class="section section--yellow" id="skills">
   <div class="wrap">
     <div class="section__head reveal">
@@ -298,7 +454,7 @@
       <h2 class="section__title">こんなことが身につきます</h2>
     </div>
 
-    <ul class="benefits reveal">
+    <ul class="benefits stagger">
       <li class="benefit">
         <svg class="benefit__icon" aria-hidden="true" focusable="false"><use href="#ico-steps"/></svg>
         <div>
@@ -336,7 +492,7 @@
     <div class="skills reveal">
       <h3>まずは覚えるべき「プログラミングスキル9」</h3>
       <p>プログラミングは基礎スキルの習得が欠かせません。レッスンのなかで繰り返し出てくる9つの大事なスキルを、手を動かしながら自然に身につけていきます。</p>
-      <ul class="skills__grid">
+      <ul class="skills__grid stagger">
         <li class="sk-y">順次処理</li>
         <li class="sk-p">繰り返し</li>
         <li class="sk-t">分岐</li>
@@ -352,7 +508,7 @@
 </section>
 
 
-<!-- ===== 5. 料金 ===== -->
+<!-- ===== 8. 料金 ===== -->
 <section class="section" id="fee">
   <div class="wrap">
     <div class="section__head reveal">
@@ -361,7 +517,7 @@
       <p class="section__lead">追加の教材費はいただきません。表示はすべて税込です。</p>
     </div>
 
-    <div class="fee reveal">
+    <div class="fee reveal" data-reveal="zoom">
       <div class="fee__list">
         <div><span class="fee__k">入会金</span><span class="fee__v">11,000円<small>（初回のみ）</small></span></div>
         <div><span class="fee__k">月会費</span><span class="fee__v">9,900円<small>／月</small></span></div>
@@ -375,7 +531,7 @@
 </section>
 
 
-<!-- ===== 6. 保護者の方へ ===== -->
+<!-- ===== 9. 保護者の方へ ===== -->
 <section class="section section--teal" id="parents">
   <div class="wrap">
     <div class="section__head reveal">
@@ -384,7 +540,7 @@
       <p class="section__lead">教室は1階「カフェルナカルド」の2階にあります。</p>
     </div>
 
-    <ul class="parents reveal">
+    <ul class="parents stagger">
       <li class="parents__card">
         <svg aria-hidden="true" focusable="false"><use href="#ico-cup"/></svg>
         <div>
@@ -412,7 +568,7 @@
 </section>
 
 
-<!-- ===== 7. よくあるご質問 ===== -->
+<!-- ===== 10. よくあるご質問 ===== -->
 <section class="section" id="faq">
   <div class="wrap">
     <div class="section__head reveal">
@@ -420,7 +576,7 @@
       <h2 class="section__title">よくあるご質問</h2>
     </div>
 
-    <div class="faq reveal">
+    <div class="faq stagger">
       <details>
         <summary><span class="badge">Q</span>何歳頃から始めたらよいですか？</summary>
         <div class="faq__answer"><span class="badge badge--a">A</span>
@@ -456,7 +612,7 @@
 </section>
 
 
-<!-- ===== 8. アクセス ===== -->
+<!-- ===== 11. アクセス ===== -->
 <section class="section section--cream" id="access">
   <div class="wrap">
     <div class="section__head reveal">
@@ -464,8 +620,8 @@
       <h2 class="section__title">教室のご案内</h2>
     </div>
 
-    <div class="access reveal">
-      <div class="access__info">
+    <div class="access">
+      <div class="access__info reveal" data-reveal="left">
         <p class="access__addr">大阪府堺市美原区黒山422-1<br>カフェルナカルド 2階</p>
         <dl class="access__dl">
           <div><dt>TEL</dt><dd><a href="tel:08042493221">080-4249-3221</a></dd></div>
@@ -479,7 +635,7 @@
           @lunacaldo_academy
         </a>
       </div>
-      <div class="access__map">
+      <div class="access__map reveal" data-reveal="right">
         <iframe
           title="ルナカルドアカデミーの地図（Googleマップ）"
           src="https://maps.google.com/maps?q=%E5%A4%A7%E9%98%AA%E5%BA%9C%E5%A0%BA%E5%B8%82%E7%BE%8E%E5%8E%9F%E5%8C%BA%E9%BB%92%E5%B1%B1422-1&hl=ja&z=16&output=embed"
@@ -490,7 +646,7 @@
 </section>
 
 
-<!-- ===== 9. 無料体験会 ===== -->
+<!-- ===== 12. 無料体験会 ===== -->
 <section class="section trial" id="trial">
   <div class="wrap">
     <div class="section__head reveal">
@@ -498,7 +654,7 @@
       <h2 class="section__title">無料体験会のご案内</h2>
     </div>
 
-    <div class="trial__card reveal">
+    <div class="trial__card reveal" data-reveal="zoom">
       <dl class="trial__dl">
         <div><dt>日程</dt><dd>平日 16:20〜 ／ 18:00〜（ご希望の日時を伺います）</dd></div>
         <div><dt>対象</dt><dd>小学1年〜6年生</dd></div>
@@ -552,6 +708,11 @@
   </a>
   <a class="btn btn--trial" href="#trial">無料体験を見る</a>
 </div>
+
+<!-- ===== トップへ戻る ===== -->
+<a class="to-top" href="#top" aria-label="ページの先頭へ戻る">
+  <svg aria-hidden="true" focusable="false"><use href="#ico-arrow-up"/></svg>
+</a>
 
 <script src="js/main.js" defer></script>
 </body>
