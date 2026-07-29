@@ -56,8 +56,10 @@
       });
     }
 
+    /* 「動きを減らす」設定でも切り替えは続ける。
+       その場合はフェードをやめて瞬時に入れ替える（CSS側で transition を無効化）。 */
     function start() {
-      if (reduceMotion || timer) return;
+      if (timer) return;
       timer = setInterval(function () { show(index + 1); }, interval);
     }
     function stop() {
