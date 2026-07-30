@@ -4,6 +4,8 @@
 1ページ完結、**黒基調**のデザインで、2026年版の二つ折りパンフレットの内容とトーンに合わせています。
 ビルドツールは使いません。HTML / CSS / バニラJS のみで、ファイルをそのまま GitHub Pages に置いています。
 
+**公開URL: <https://lunacaldoacademy.github.io/website/>**
+
 ## ファイル構成
 
 | パス | 役割 |
@@ -38,7 +40,7 @@
 | トップ画像がゆっくり縮まりながら現れる | `.hero__slide` の `transform: scale(1.05)` → `scale(1)` |
 | ヒーローの要素が順に浮かび上がる | `style.css` の `@keyframes rise`（CSSのみ） |
 | スクロールで各ブロックが出現 | `.reveal` `.stagger` ＋ `main.js` の IntersectionObserver |
-| 世界観の写真が自動で横に流れる | `@keyframes marquee`（マウスを乗せると一時停止） |
+| 世界観の写真が自動で横に流れる | `@keyframes marquee`（マウスを乗せると一時停止）。速さは `.gallery` の `--gallery-speed`（既定 72秒で1周。数字を大きくするほどゆっくり） |
 | カード類のホバーで金の枠が出る | `.course` `.campus` `.apps > li` などの `:hover` |
 | ボタンのホバーで色が横から満ちる | `.btn::before` |
 | ヘッダーの進捗バー・影 | `main.js` のスクロール監視 |
@@ -103,7 +105,16 @@ python tools/optimize_images.py
 | `ceo` | 代表あいさつの写真 |
 | `code-texture` | 無料体験セクションの背景 |
 | `world-01` 〜 `world-03` | 世界観ギャラリー |
+| `program01` | 「大切にしていること」の3つの力の図（**透明背景。WebPのみ生成**） |
 | `ig-qr.png` | フッターのQRコード（読み取り精度のため無変換でコピーされます） |
+
+**透明背景の画像について**: `program01` は背景が透明のため、JPEGに変換すると背景が白くなり
+黒いページの上で浮いてしまいます。そのためスクリプト側で「WebPのみ出力」に指定しています
+（`tools/optimize_images.py` の `TRANSPARENT_BG`）。同じ扱いにしたい画像が増えたら、
+ここにファイル名（拡張子なし）を追加してください。
+
+**コース画像は正方形で用意してください**: 3コースのカードは枠が正方形（`aspect-ratio: 1`）です。
+横長の画像を入れると上下が切り取られます。
 
 ### 手で `img/` を触らないでください
 
@@ -157,6 +168,7 @@ python tools/optimize_images.py
 | 変えたいもの | 行 | 現在の値 |
 |---|---|---|
 | 背景の黒 | `--ink` | `#0A0A0C` |
+| カードの背景 | `--surface` | `#191D2B`（背景と見分けがつくよう青みを足しています） |
 | 本文の文字色 | `--text` | `#F2F0EC` |
 | 赤（ボタン・ラベル） | `--crimson` | `#A5133A` |
 | 金（English見出し・枠） | `--gold` | `#C9A75C` |
@@ -165,6 +177,31 @@ python tools/optimize_images.py
 
 `clamp(最小, 画面幅に応じた値, 最大)` という書き方です。
 真ん中の数字を大きくすると、画面が広いときに大きくなります。
+
+### 対応ソフトのピクトグラムの色を変えたい
+
+`css/style.css` の `.apps__icon--◯◯` の5行だけを書き換えます。
+
+```
+.apps__icon--word    { --app-color: #5B9BF3; }  /* 文書＝青 */
+.apps__icon--excel   { --app-color: #4FBF87; }  /* 表計算＝緑 */
+.apps__icon--ppt     { --app-color: #E88B3E; }  /* スライド＝橙 */
+.apps__icon--web     { --app-color: var(--mint); }
+.apps__icon--present { --app-color: var(--crimson-lt); }
+```
+
+アイコンの図柄そのものは `index.html` の対応ソフト欄にSVGで直接書いてあります。
+**Microsoft公式のロゴは商標のため使っていません**。一般的な図形に色を当てて区別しています。
+
+### 行末に1語だけ取り残されるのを直したい
+
+`css/style.css` の `:root` の少し下に、折り返しのルールを1か所にまとめてあります。
+
+- `text-wrap: pretty` … 長めの本文向け。最終行が短くなりすぎないように整える
+- `text-wrap: balance` … 短い見出し・キャプション向け。全部の行の長さをそろえる
+
+新しく作った要素で同じ問題が出たら、`balance` のセレクタ一覧に追加してください。
+**対象が `<span>` などインライン要素のときは `display: block` も一緒に指定**しないと効きません。
 
 ### トップ画像の動きを変えたい
 
@@ -211,31 +248,43 @@ git add . && git commit -m "文章を微調整"
 
 ## GitHub Pages への公開
 
-初回のみ:
+**公開済みです。** 初回セットアップ（リポジトリ作成・リモート登録・Pages有効化）は完了しているので、
+以降は下のコマンドだけで更新が反映されます。
 
-1. github.com で `lunacaldoacademy/website` を Public・空の状態で作成
-2. このフォルダで以下を実行
+| 項目 | 現在の設定 |
+|---|---|
+| リポジトリ | `lunacaldoacademy/website`（Public） |
+| ブランチ | `main` |
+| Pages の Source | `Deploy from a branch` / `main` / `/ (root)` |
+| 公開URL | <https://lunacaldoacademy.github.io/website/> |
 
-```bash
-git init
-git add .
-git commit -m "ルナカルドアカデミー公式サイト 初版"
-git branch -M main
-git remote add origin https://github.com/lunacaldoacademy/website.git
-git push -u origin main
-```
-
-3. リポジトリの **Settings → Pages** で Source を `Deploy from a branch` / `main` / `/ (root)` に設定
-4. 数分後 `https://lunacaldoacademy.github.io/website/` で公開されます
-
-2回目以降の更新:
+### 更新のしかた
 
 ```bash
 git add . && git commit -m "内容を更新" && git push
 ```
 
-独自ドメインを取得した場合は、このフォルダに `CNAME` ファイル（中身はドメイン名1行）を追加し、
-`index.html` の `og:url` / `canonical`、`sitemap.xml`、`robots.txt` のURLを書き換えてください。
+プッシュしてから実際にサイトへ反映されるまで **1〜2分**かかります。
+反映されないときは、リポジトリの **Actions** タブでデプロイが成功しているか確認してください。
+ブラウザにキャッシュが残っている場合は Ctrl+F5 で再読み込みします。
+
+### リポジトリ名とURLの関係
+
+公開URLの `/website/` の部分は**リポジトリ名がそのまま出ています**。
+リポジトリ名を変えると公開URLも変わるため、変えた場合は次の20か所すべての書き換えが必要です。
+
+- `index.html` の `canonical` / `og:url` / `og:image` と構造化データ（`@id` `url` `logo` `image`）
+- `sitemap.xml` の `<loc>`
+- `robots.txt` の `Sitemap:`
+
+### 独自ドメインを使う場合
+
+このフォルダに `CNAME` ファイル（中身はドメイン名1行）を追加し、上に挙げた
+`canonical` / `og:url` / `sitemap.xml` / `robots.txt` のURLを新しいドメインに書き換えてください。
+
+### 検索エンジンへの登録（未実施）
+
+Google Search Console にサイトを登録し、`sitemap.xml` を送信すると検索結果への掲載が早まります。
 
 ## よく差し替える項目
 

@@ -112,7 +112,7 @@ setTimeout(function () {
   "mainEntity": [
     { "@type": "Question", "name": "何歳頃から始めたらよいですか？", "acceptedAnswer": { "@type": "Answer", "text": "小学1年生からをおすすめしています。学齢期はお子さまの得意分野や「好き」を見つけ、主体性が育まれる大切な時期です。" } },
     { "@type": "Question", "name": "パソコンが初めてでも大丈夫ですか？", "acceptedAnswer": { "@type": "Answer", "text": "大丈夫です。授業のなかでタイピングや基本操作から丁寧に指導します。パソコンスキルはプログラミングと並行して身につけていけます。" } },
-    { "@type": "Question", "name": "受講料金を知りたいのですが。", "acceptedAnswer": { "@type": "Answer", "text": "料金は無料体験の際に、お子さまの様子やご希望の内容をうかがったうえで直接ご案内しています。お電話やInstagramのDMでもお答えできますので、お気軽にお問い合わせください。" } },
+    { "@type": "Question", "name": "受講料金を知りたいのですが。", "acceptedAnswer": { "@type": "Answer", "text": "料金は無料体験の際に、お子さまの様子やご希望の内容をうかがったうえで直接ご案内しています。" } },
     { "@type": "Question", "name": "子どもの飽きっぽさが心配です。", "acceptedAnswer": { "@type": "Answer", "text": "マインクラフト・Scratch・ロブロックスと入り口が複数あり、パソコンスキルにも幅があります。やりたいことから始められる構成です。" } },
     { "@type": "Question", "name": "送迎時、保護者の待ち時間はどう過ごせますか？", "acceptedAnswer": { "@type": "Answer", "text": "堺美原校は1階が「カフェルナカルド」です。お仕事や読書、下のお子さまの見守りにもご利用いただけます。" } },
     { "@type": "Question", "name": "どちらの校舎でも同じ内容を学べますか？", "acceptedAnswer": { "@type": "Answer", "text": "堺美原校（本校）・富田林喜志校のいずれも、カリキュラムは同じです。通いやすいほうをお選びください。" } }
@@ -321,20 +321,20 @@ setTimeout(function () {
           プログラミングを通して形にしていく。その夢中になる時間こそが、
           これからの社会で求められる力を育てます。
         </p>
-        <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem; margin-top:2rem; font-size:var(--ts-small)">
-          <div>
-            <b style="color:var(--crimson); display:block; margin-bottom:.5rem">思考力</b>
-            <p style="margin:0; color:var(--text-2); line-height:1.6">問いを立て、情報を整理し、論理的に考える力</p>
-          </div>
-          <div>
-            <b style="color:var(--gold); display:block; margin-bottom:.5rem">創造力</b>
-            <p style="margin:0; color:var(--text-2); line-height:1.6">独創的なアイデアを生み出し、形にする力</p>
-          </div>
-          <div>
-            <b style="color:var(--mint); display:block; margin-bottom:.5rem">解決力</b>
-            <p style="margin:0; color:var(--text-2); line-height:1.6">困難に直面し、試行錯誤を重ねて乗り越える力</p>
-          </div>
-        </div>
+        <ul class="forces">
+          <li class="force--derive">
+            <div class="forces__head"><b>思考力</b><span class="forces__en">Derive</span></div>
+            <p>問いを立て、情報を整理し、論理的に考える力</p>
+          </li>
+          <li class="force--creativity">
+            <div class="forces__head"><b>創造力</b><span class="forces__en">Creativity</span></div>
+            <p>独創的なアイデアを生み出し、形にする力</p>
+          </li>
+          <li class="force--solution">
+            <div class="forces__head"><b>解決力</b><span class="forces__en">Solution</span></div>
+            <p>困難に直面し、試行錯誤を重ねて乗り越える力</p>
+          </li>
+        </ul>
       </div>
 
       <div class="reveal" data-reveal="right">
@@ -713,7 +713,7 @@ setTimeout(function () {
       <details>
         <summary><span class="q">Q</span>受講料金を知りたいのですが。</summary>
         <div class="faq__answer">
-          <p>料金は無料体験の際に、お子さまの様子やご希望の内容をうかがったうえで直接ご案内しています。お電話やInstagramのDMでもお答えできますので、お気軽にお問い合わせください。</p>
+          <p>料金は無料体験の際に、お子さまの様子やご希望の内容をうかがったうえで直接ご案内しています。</p>
         </div>
       </details>
       <details>
