@@ -37,7 +37,6 @@
 | **トップ画像が6秒ごとにふわっと切り替わる** | `.hero__slider`。間隔は `data-interval="6000"`（ミリ秒）で変更。フェードの長さは `.js .hero__slide` の `transition` |
 | トップ画像がゆっくり縮まりながら現れる | `.hero__slide` の `transform: scale(1.05)` → `scale(1)` |
 | ヒーローの要素が順に浮かび上がる | `style.css` の `@keyframes rise`（CSSのみ） |
-| 3つの力の外周がゆっくり回る | `@keyframes spin` ／ `.triad__ring` |
 | スクロールで各ブロックが出現 | `.reveal` `.stagger` ＋ `main.js` の IntersectionObserver |
 | 世界観の写真が自動で横に流れる | `@keyframes marquee`（マウスを乗せると一時停止） |
 | カード類のホバーで金の枠が出る | `.course` `.campus` `.apps > li` などの `:hover` |

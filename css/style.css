@@ -481,65 +481,17 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .belief__body p { color: var(--text-2); }
 .belief__body strong { color: var(--text); font-weight: 600; }
 
-/* 3つの力（思考力・創造力・解決力） */
+/* 3つの力（思考力・創造力・解決力）＝ program01 の図版1枚 */
 .triad {
-  position: relative;
-  aspect-ratio: 1;
-  max-width: 380px;
-  margin-inline: auto;
+  max-width: 420px;
   width: 100%;
+  margin-inline: auto;
 }
-.triad__core,
-.triad__node {
-  position: absolute;
-  display: grid;
-  place-content: center;
-  text-align: center;
-  border-radius: 50%;
-}
-.triad__core {
-  inset: 26%;
-  background: radial-gradient(circle at 50% 40%, rgba(165, 19, 58, .35), transparent 70%);
-  border: 1px solid var(--line);
-  font-size: var(--ts-small);
-  font-weight: 600;
-  line-height: 1.7;
-  letter-spacing: .08em;
-}
-.triad__node {
-  width: 37%;
-  aspect-ratio: 1;
-  border: 1px solid var(--gold);
-  background: rgba(10, 10, 12, .82);
-  backdrop-filter: blur(2px);
-}
-.triad__node b {
+.triad img {
   display: block;
-  font-size: var(--ts-small);
-  font-weight: 600;
-  letter-spacing: .1em;
+  width: 100%;
+  height: auto;
 }
-.triad__node span {
-  display: block;
-  font-family: var(--font-en);
-  font-size: .58rem;
-  letter-spacing: .2em;
-  color: var(--gold);
-  text-transform: uppercase;
-}
-/* パンフレットと同じ並び：上=思考力／左下=創造力／右下=解決力 */
-.triad__node:nth-of-type(1) { top: 0;    left: 31.5%; }
-.triad__node:nth-of-type(2) { bottom: 4%; left: 2%; }
-.triad__node:nth-of-type(3) { bottom: 4%; right: 2%; }
-.triad__ring {
-  position: absolute;
-  display: block;
-  inset: 12%;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-}
-.js .triad__ring { animation: spin 34s linear infinite; border-style: dashed; }
-@keyframes spin { to { transform: rotate(360deg); } }
 
 /* -------------------------------------------------------------
    7. コース
@@ -681,17 +633,27 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 /* -------------------------------------------------------------
    11. 世界観ギャラリー（自動で流れる）
    ------------------------------------------------------------- */
-.gallery { overflow: hidden; padding-block: 0; }
+.gallery {
+  overflow: hidden;
+  padding-block: 0;
+  /* 1周にかかる時間。数字を大きくするほどゆっくり流れる */
+  --gallery-speed: 72s;
+  /* 画像と画像のすき間 */
+  --gallery-gap: 2px;
+}
 .gallery__track {
   display: flex;
-  gap: 2px;
+  gap: var(--gallery-gap);
   width: max-content;
-  animation: marquee 48s linear infinite;
+  animation: marquee var(--gallery-speed) linear infinite;
+  will-change: transform;
 }
 .gallery:hover .gallery__track { animation-play-state: paused; }
+/* 右から左へ。前半6枚ぶん動いた時点で後半6枚と絵柄が重なるので、継ぎ目が見えない。
+   すき間は6枚に対して6個ぶん動かす必要があるが -50% だと5.5個ぶんなので、半分を足して補正する */
 @keyframes marquee {
   from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
+  to   { transform: translateX(calc(-50% - var(--gallery-gap) / 2)); }
 }
 .gallery__item {
   flex: none;
@@ -1042,8 +1004,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   }
   /* スライドは切り替わり続けるが、フェードと拡大は行わない */
   .js .hero__slide { transition: none !important; transform: none !important; }
-  .gallery__track,
-  .js .triad__ring { animation: none !important; }
+  .gallery__track { animation: none !important; }
   .btn, .course, .campus, .apps > li, .concepts > li, .future > li { transition: none; }
   .btn::before { display: none; }
   .course__thumb img, .gallery__item img { transition: none; }

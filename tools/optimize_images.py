@@ -52,6 +52,8 @@ PHOTO_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".heic", ".heif"}
 
 # 変換せずそのままコピーするもの（QRは劣化させない）
 COPY_AS_IS = {"ig-qr.png"}
+# 透明背景を保持すべきファイル（WebP のみ出力、JPEG フォールバックなし）
+TRANSPARENT_BG = {"program01"}
 # アンダーバー始まりのファイルは lib の一括処理から除外する（ロゴなど個別に扱うもの）
 
 # ブランドカラー（黒基調・高級感）
@@ -121,12 +123,18 @@ def crop_cover(img: Image.Image, w: int, h: int) -> Image.Image:
     return img.resize((w, h), Image.LANCZOS)
 
 
-def save_pair(img: Image.Image, stem: str) -> tuple[int, int]:
+def save_pair(img: Image.Image, stem: str, jpg_fallback: bool = True) -> tuple[int, int]:
     webp = OUT / f"{stem}.webp"
-    jpg = OUT / f"{stem}.jpg"
     img.save(webp, "WEBP", quality=WEBP_QUALITY, method=6)
-    img.save(jpg, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
-    return webp.stat().st_size // 1024, jpg.stat().st_size // 1024
+    kb_webp = webp.stat().st_size // 1024
+    if jpg_fallback:
+        jpg = OUT / f"{stem}.jpg"
+        img_rgb = img.convert("RGB") if img.mode == "RGBA" else img
+        img_rgb.save(jpg, "JPEG", quality=JPEG_QUALITY, optimize=True, progressive=True)
+        kb_jpg = (OUT / f"{stem}.jpg").stat().st_size // 1024
+    else:
+        kb_jpg = 0
+    return kb_webp, kb_jpg
 
 
 def sorted_photos(folder: Path) -> list[Path]:
@@ -233,10 +241,18 @@ def export_lib() -> None:
             continue
         if src.suffix.lower() not in PHOTO_EXTS:
             continue
-        img = fit(flatten(Image.open(src)), LIB_MAX_EDGE)
-        kb_webp, kb_jpg = save_pair(img, src.stem)
-        print(f"  {src.stem}: {img.size[0]}x{img.size[1]} "
-              f"-> webp {kb_webp}KB / jpg {kb_jpg}KB")
+        src_img = Image.open(src)
+        # 透明背景を保持すべき画像か判定
+        keep_transparent = src.stem in TRANSPARENT_BG
+        if keep_transparent:
+            img = fit(src_img, LIB_MAX_EDGE)
+            kb_webp, kb_jpg = save_pair(img, src.stem, jpg_fallback=False)
+            print(f"  {src.stem}: {img.size[0]}x{img.size[1]} -> webp {kb_webp}KB")
+        else:
+            img = fit(flatten(src_img), LIB_MAX_EDGE)
+            kb_webp, kb_jpg = save_pair(img, src.stem)
+            print(f"  {src.stem}: {img.size[0]}x{img.size[1]} "
+                  f"-> webp {kb_webp}KB / jpg {kb_jpg}KB")
 
 
 # ---------------------------------------------------------------- ロゴ・アイコン
