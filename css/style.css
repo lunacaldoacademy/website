@@ -949,6 +949,16 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   color: var(--gold);
 }
 .trial__dl dd { margin: 0; font-size: var(--ts-small); color: var(--text-2); }
+/* 日程の校舎名。時刻の頭がそろうように幅を固定する */
+.trial__campus {
+  display: inline-block;
+  min-width: 10.5em;
+  color: var(--text);
+}
+@media (max-width: 480px) {
+  /* 幅が足りないと時刻が折り返してかえって読みにくいので、校舎名を行頭に置く */
+  .trial__campus { display: block; min-width: 0; margin-top: var(--s-2); }
+}
 .trial__actions {
   display: grid;
   gap: var(--s-3);
