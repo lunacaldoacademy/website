@@ -532,7 +532,11 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   transition: border-color .4s var(--ease), transform .4s var(--ease);
 }
 .course:hover { border-color: var(--gold); transform: translateY(-6px); }
-.course__thumb { position: relative; aspect-ratio: 16 / 10; overflow: hidden; }
+/* 素材が正方形なので枠も正方形にし、トリミングなしで全体を見せる */
+.course__thumb { position: relative; aspect-ratio: 1; overflow: hidden; }
+/* img の親は <picture>。ここに高さがないと img の height:100% が auto に落ちて
+   object-fit: cover が効かず、画像が枠からはみ出して下側だけ切れてしまう */
+.course__thumb picture { display: block; width: 100%; height: 100%; }
 .course__thumb img {
   width: 100%; height: 100%; object-fit: cover;
   transition: transform .8s var(--ease);
