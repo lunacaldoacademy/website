@@ -16,6 +16,7 @@
 | **`img-src/hero/`** | **トップ画像を入れる場所。ここに画像を入れます** |
 | `img/` | 実際にページが読み込む画像（自動生成。手で置かない） |
 | `tools/optimize_images.py` | 素材をWeb用に軽量化し、トップのスライドを組み立てるスクリプト |
+| `tools/bump_assets.py` | CSS / JS の更新をブラウザに確実に読ませるためのスクリプト |
 | `sitemap.xml` / `robots.txt` | 検索エンジン向け |
 | `.nojekyll` | GitHub Pages の Jekyll 処理を無効化 |
 
@@ -232,6 +233,35 @@ python tools/optimize_images.py
 python -m http.server 8000
 ```
 
+### CSS や JS を編集したら（重要）
+
+ブラウザは一度読み込んだ `style.css` と `main.js` をしばらく使い回します。
+そのためファイルを更新しても、**古い見た目のまま表示されることがあります**。
+
+これを防ぐため、`index.html` の読み込みURLに中身から計算した符号を付けています。
+
+```html
+<link rel="stylesheet" href="css/style.css?v=83e5bdd8">
+<script src="js/main.js?v=f06ca919" defer></script>
+```
+
+**CSS か JS を編集したら、コミットする前に一度これを実行してください。**
+
+```bash
+python tools/bump_assets.py
+```
+
+符号が付け替わり、ブラウザが必ず新しいファイルを読み直すようになります。
+
+- **日付ではなく中身のハッシュ**なので、中身を変えたときだけ符号が変わります。
+  更新し忘れも、変えていないのに再ダウンロードが起きることもありません
+- 何度実行しても安全です（変わっていなければ「変更なし」と表示されるだけ）
+- **HTMLだけを直したときは実行不要**です。HTML自体はキャッシュされにくいため
+
+実行を忘れたまま公開しても、しばらくすれば新しい表示に切り替わります（GitHub Pages は
+10分ほどでキャッシュが切れます）。ただし**自分の手元では長く残る**ので、
+見た目が変わらないときは Ctrl+F5 で強制的に読み直してください。
+
 ### 失敗しても元に戻せます
 
 git で履歴を取っているので、壊してしまっても直前の状態に戻せます。
@@ -259,6 +289,12 @@ git add . && git commit -m "文章を微調整"
 | 公開URL | <https://lunacaldoacademy.github.io/website/> |
 
 ### 更新のしかた
+
+CSS や JS を編集した場合は、先に符号を付け替えてからコミットします。
+
+```bash
+python tools/bump_assets.py
+```
 
 ```bash
 git add . && git commit -m "内容を更新" && git push
