@@ -949,10 +949,11 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   color: var(--gold);
 }
 .trial__dl dd { margin: 0; font-size: var(--ts-small); color: var(--text-2); }
-/* 日程の校舎名。時刻の頭がそろうように幅を固定する */
+/* 日程・内容の校舎名。時刻や科目名の頭がそろうように幅を固定する。
+   いちばん長い「富田林喜志校」が収まる幅にしている */
 .trial__campus {
   display: inline-block;
-  min-width: 10.5em;
+  min-width: 7.5em;
   color: var(--text);
 }
 @media (max-width: 480px) {
@@ -994,19 +995,6 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .footer__contact { display: grid; gap: var(--s-3); font-size: var(--ts-small); }
 .footer__contact a { color: var(--text-2); text-decoration: none; }
 .footer__contact a:hover { color: var(--gold-lt); }
-.footer__qr {
-  display: flex;
-  align-items: center;
-  gap: var(--s-4);
-  margin-top: var(--s-4);
-}
-.footer__qr img {
-  width: 92px;
-  background: #fff;
-  padding: 6px;
-  border-radius: 2px;
-}
-.footer__qr span { font-size: var(--ts-tiny); color: var(--muted); }
 .footer__bottom {
   padding-top: var(--s-5);
   border-top: 1px solid var(--line-soft);
