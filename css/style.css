@@ -602,18 +602,35 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   margin-bottom: var(--s-4);
   border-bottom: 1px solid var(--line-soft);
 }
-.course__body { padding: var(--s-5); flex: 1; display: flex; flex-direction: column; }
+.course__body { padding: var(--s-5) var(--s-5) 0; flex: 1; }
 .course__desc { font-size: var(--ts-small); color: var(--text-2); }
 .course__note { font-size: var(--ts-tiny); color: var(--muted); margin-top: var(--s-3); }
 .course__langs {
   display: flex;
   flex-wrap: wrap;
   gap: var(--s-2);
-  margin-top: auto;          /* カードの高さが違ってもタグの位置をそろえる */
-  padding-top: var(--s-4);
+  /* 行の高さは3枚のうち最も高いカードに合わされるため、
+     指定しないとタグが余った高さぶん縦に伸びてしまう */
+  align-items: flex-start;   /* タグ自体を中身の高さに保つ */
+  align-content: flex-start; /* タグの行をまとめて上に寄せる */
+  margin: var(--s-4) var(--s-5) 0;   /* 左右の余白ぶん区切り線を内側に寄せる */
+  padding: var(--s-4) 0 var(--s-5);
   border-top: 1px solid var(--line-soft);
 }
-.course__note + .course__langs { margin-top: var(--s-4); }
+
+/* 区切り線の高さを3枚でそろえる。
+   タグの行数がカードによって違うため、下端に寄せるだけでは線がずれてしまう。
+   subgrid で「画像／本文／タグ」の3行を親グリッドと共有させると、
+   各行の高さが3枚の中で最も高いものに合わされ、線の位置が一致する。 */
+@supports (grid-template-rows: subgrid) {
+  .course {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 3;
+    row-gap: 0;               /* 親の gap がカード内に入らないようにする */
+  }
+  .course__body { flex: none; }
+}
 
 /* -------------------------------------------------------------
    8. パソコンスキル
