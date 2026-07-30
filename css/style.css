@@ -943,7 +943,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .trial__dl > div { display: flex; gap: var(--s-4); align-items: baseline; }
 .trial__dl dt {
   flex: none;
-  width: 4.5em;
+  width: 5.4em;          /* いちばん長い「体験時間」が1行に収まる幅（字間0.14emぶんも要る） */
   font-size: var(--ts-tiny);
   letter-spacing: .14em;
   color: var(--gold);
