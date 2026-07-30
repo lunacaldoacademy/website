@@ -324,9 +324,20 @@ git add . && git commit -m "内容を更新" && git push
 このフォルダに `CNAME` ファイル（中身はドメイン名1行）を追加し、上に挙げた
 `canonical` / `og:url` / `sitemap.xml` / `robots.txt` のURLを新しいドメインに書き換えてください。
 
-### 検索エンジンへの登録（未実施）
+### 検索エンジンへの登録
 
 Google Search Console にサイトを登録し、`sitemap.xml` を送信すると検索結果への掲載が早まります。
+登録には Google アカウントでのログインが必要なため、ご自身での作業になります。
+
+1. [Google Search Console](https://search.google.com/search-console) を開く
+2. 「URLプレフィックス」に `https://lunacaldoacademy.github.io/website/` を入力
+3. 所有権の確認で **「HTMLタグ」** を選び、表示される `<meta name="google-site-verification" content="…">` をコピー
+4. そのタグを `index.html` の `<head>` 内（`<meta name="theme-color">` の下あたり）に貼り、コミットしてプッシュ
+5. 反映を1〜2分待ってから、Search Console の「確認」を押す
+6. 左メニューの「サイトマップ」で `sitemap.xml` と入力して送信
+
+**内容を大きく更新したら `sitemap.xml` の `<lastmod>` の日付も更新**してください（例: `2026-07-30`）。
+更新頻度を伝える目安になります。
 
 ## よく差し替える項目
 
