@@ -841,7 +841,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .campus__dl > div { display: flex; gap: var(--s-4); align-items: baseline; }
 .campus__dl dt {
   flex: none;
-  width: 3.6em;
+  width: 6em;            /* いちばん長い「開講コース」が1行に収まる幅（字間0.12emぶんも要る） */
   font-size: var(--ts-tiny);
   letter-spacing: .12em;
   color: var(--gold);
