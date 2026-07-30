@@ -14,8 +14,10 @@
   /* 面 */
   --ink:        #0A0A0C;   /* 基本の背景 */
   --ink-2:      #0E0E12;   /* わずかに浮いた背景 */
-  --surface:    #141419;   /* カード */
-  --surface-2:  #1C1C23;   /* カードの中の面 */
+  /* カードの背景。明るさを上げすぎず、青みを足して背景と区別している。
+     明るさだけで差をつけたい場合は #1B1B22（控えめ）〜 #26262F（はっきり）が目安 */
+  --surface:    #191D2B;   /* カード */
+  --surface-2:  #232839;   /* カードの中の面（--surface より明るく保つ） */
   --line:       rgba(242, 240, 236, .12);
   --line-soft:  rgba(242, 240, 236, .07);
 
@@ -91,6 +93,25 @@ h1, h2, h3, h4 { margin: 0; font-weight: 600; line-height: 1.6; letter-spacing: 
 p { margin: 0 0 1.2em; }
 p:last-child { margin-bottom: 0; }
 ul, ol { margin: 0; padding: 0; list-style: none; }
+
+/* 行末に1語だけ取り残されるのを防ぐ。ここ1か所で全体の折り返しを調整している。
+   pretty  = 長めの本文向け。最終行が短くなりすぎないよう最後だけ整える
+   balance = 短い見出し・キャプション向け。全部の行を同じくらいの長さにそろえる
+   （balance は6行程度までの短い文章が対象。長文に使うと効かない）
+   ※ 対象がインライン要素のときは display:block も必要（例：.apps span） */
+p, li, dd, dt, figcaption, summary, h1, h2, h3, h4 { text-wrap: pretty; }
+
+.section__title,
+.section__lead,
+.hero__desc,
+.apps span,
+.concepts > li,
+.future h3,
+.future p,
+.campus h3,
+.course__name {
+  text-wrap: balance;
+}
 
 ::selection { background: var(--crimson); color: #fff; }
 
@@ -576,13 +597,42 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   transition: border-color .4s var(--ease);
 }
 .apps > li:hover { border-color: var(--gold); }
+
+/* ピクトグラム。色を変えたいときは下の --app-color の値だけ差し替える */
+.apps__icon {
+  display: block;
+  width: clamp(30px, 8vw, 36px);
+  height: auto;
+  aspect-ratio: 1;
+  margin: 0 auto var(--s-3);
+  fill: none;
+  stroke: var(--app-color, var(--gold));
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: transform .4s var(--ease);
+}
+.apps > li:hover .apps__icon { transform: translateY(-2px) scale(1.06); }
+
+.apps__icon--word    { --app-color: #5B9BF3; }  /* 文書＝青 */
+.apps__icon--excel   { --app-color: #4FBF87; }  /* 表計算＝緑 */
+.apps__icon--ppt     { --app-color: #E88B3E; }  /* スライド＝橙 */
+.apps__icon--web     { --app-color: var(--mint); }
+.apps__icon--present { --app-color: var(--crimson-lt); }
+
 .apps b {
   display: block;
   font-size: var(--ts-small);
   letter-spacing: .1em;
   margin-bottom: var(--s-2);
 }
-.apps span { font-size: var(--ts-tiny); color: var(--muted); line-height: 1.8; }
+.apps span {
+  /* text-wrap: balance（ベース側で指定）を効かせるためにブロック化している */
+  display: block;
+  font-size: var(--ts-tiny);
+  color: var(--muted);
+  line-height: 1.8;
+}
 
 /* -------------------------------------------------------------
    9. プログラミング的概念
@@ -1005,7 +1055,7 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   /* スライドは切り替わり続けるが、フェードと拡大は行わない */
   .js .hero__slide { transition: none !important; transform: none !important; }
   .gallery__track { animation: none !important; }
-  .btn, .course, .campus, .apps > li, .concepts > li, .future > li { transition: none; }
+  .btn, .course, .campus, .apps > li, .apps__icon, .concepts > li, .future > li { transition: none; }
   .btn::before { display: none; }
   .course__thumb img, .gallery__item img { transition: none; }
 }
