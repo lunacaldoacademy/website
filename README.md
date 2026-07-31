@@ -4,7 +4,7 @@
 1ページ完結、**黒基調**のデザインで、2026年版の二つ折りパンフレットの内容とトーンに合わせています。
 ビルドツールは使いません。HTML / CSS / バニラJS のみで、ファイルをそのまま GitHub Pages に置いています。
 
-**公開URL: <https://lunacaldoacademy.github.io/website/>**
+**公開URL: <https://lunacaldoacademy.com/>**
 
 ## ファイル構成
 
@@ -292,7 +292,7 @@ git add . && git commit -m "文章を微調整"
 | リポジトリ | `lunacaldoacademy/website`（Public） |
 | ブランチ | `main` |
 | Pages の Source | `Deploy from a branch` / `main` / `/ (root)` |
-| 公開URL | <https://lunacaldoacademy.github.io/website/> |
+| 公開URL | <https://lunacaldoacademy.com/> |
 
 ### 更新のしかた
 
@@ -310,38 +310,60 @@ git add . && git commit -m "内容を更新" && git push
 反映されないときは、リポジトリの **Actions** タブでデプロイが成功しているか確認してください。
 ブラウザにキャッシュが残っている場合は Ctrl+F5 で再読み込みします。
 
-### リポジトリ名とURLの関係
+### 独自ドメインの構成（2026-07-31 移行済み）
 
-公開URLの `/website/` の部分は**リポジトリ名がそのまま出ています**。
-リポジトリ名を変えると公開URLも変わるため、変えた場合は次の20か所すべての書き換えが必要です。
+`github.io` から `lunacaldoacademy.com` へ移行しました。旧URL
+`https://lunacaldoacademy.github.io/website/` は GitHub が自動的に新ドメインへ301転送するため、
+これまでの検索評価は引き継がれます。
+
+| 役割 | 担当 |
+|---|---|
+| ドメイン登録（レジストラ） | Cloudflare Registrar（年 $10.46・自動更新オン） |
+| DNS | Cloudflare（カフェサイトと同一アカウント） |
+| サーバー（配信） | GitHub Pages |
+| SSL証明書 | GitHub Pages が自動発行・自動更新 |
+
+Cloudflare の DNS レコードは次の2件だけです。
+
+```
+lunacaldoacademy.com   CNAME   lunacaldoacademy.github.io   DNS only   Auto
+www                    CNAME   lunacaldoacademy.github.io   DNS only   Auto
+```
+
+**Proxy status は必ず「DNS only」（グレーの雲）にすること。**
+オレンジ（Proxied）にすると GitHub 側が SSL 証明書を発行・更新できなくなります。
+Cloudflare の管理画面は「Proxying is required...」と Proxied を勧めてきますが、
+GitHub Pages を使っている限りは従わないでください。
+※ カフェサイトは Cloudflare Pages なのでオレンジで正常です。2ドメインで設定が異なります。
+
+ドメインを変える場合は、`CNAME` ファイル（中身はドメイン名1行）と次の22か所の書き換えが必要です。
 
 - `index.html` の `canonical` / `og:url` / `og:image` と構造化データ（`@id` `url` `logo` `image`）
 - `sitemap.xml` の `<loc>`
 - `robots.txt` の `Sitemap:`
+- この README の記載
 
-### 独自ドメインを使う場合
-
-このフォルダに `CNAME` ファイル（中身はドメイン名1行）を追加し、上に挙げた
-`canonical` / `og:url` / `sitemap.xml` / `robots.txt` のURLを新しいドメインに書き換えてください。
-
-### 検索エンジンへの登録（独自ドメイン取得後に実施：2026-07-30 時点で保留）
-
-**独自ドメインの取得を予定しているため、登録を待っています。**
-Search Console のプロパティはURL単位で登録するので、いま `github.io` で登録すると
-ドメイン移行後にもう一度登録し直しになります。最初から最終的なURLで登録するほうが、
-二度手間も引っ越しによる一時的な順位低下も避けられます。
+### 検索エンジンへの登録
 
 Google Search Console にサイトを登録し、`sitemap.xml` を送信すると検索結果への掲載が早まります。
 登録には Google アカウントでのログインが必要なため、ご自身での作業になります。
 
+独自ドメインを持っているので、**「ドメイン」プロパティ**を選んでください。
+`http` / `https` / `www` あり・なしをまとめて1つのプロパティで扱えるため、
+「URLプレフィックス」で登録するより管理が簡単です。
+
 1. [Google Search Console](https://search.google.com/search-console) を開く
-2. 「URLプレフィックス」に `https://lunacaldoacademy.github.io/website/` を入力
-3. 所有権の確認で **「HTMLタグ」** を選び、表示される `<meta name="google-site-verification" content="…">` をコピー
-4. そのタグを `index.html` の `<head>` 内（`<meta name="theme-color">` の下あたり）に貼り、コミットしてプッシュ
-5. 反映を1〜2分待ってから、Search Console の「確認」を押す
+2. 左の **「ドメイン」** を選び、`lunacaldoacademy.com` を入力
+3. 表示される TXT レコードの値（`google-site-verification=…`）をコピー
+4. Cloudflare → `lunacaldoacademy.com` → **DNS → Records → Add record**
+   - Type: `TXT` / Name: `@` / Content: コピーした値 / TTL: Auto
+5. 保存してから Search Console の「確認」を押す（数分かかることがあります）
 6. 左メニューの「サイトマップ」で `sitemap.xml` と入力して送信
 
-**内容を大きく更新したら `sitemap.xml` の `<lastmod>` の日付も更新**してください（例: `2026-07-30`）。
+※ この方法ならサイトのHTMLを触る必要がありません。確認用の TXT レコードは
+**登録後も削除しないでください**（消すと所有権の確認が外れます）。
+
+**内容を大きく更新したら `sitemap.xml` の `<lastmod>` の日付も更新**してください（例: `2026-07-31`）。
 更新頻度を伝える目安になります。
 
 ## よく差し替える項目

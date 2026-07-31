@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lunacaldoacademy.github.io/website/sitemap.xml
+Sitemap: https://lunacaldoacademy.com/sitemap.xml
