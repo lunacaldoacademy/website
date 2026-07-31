@@ -343,25 +343,37 @@ GitHub Pages を使っている限りは従わないでください。
 - `robots.txt` の `Sitemap:`
 - この README の記載
 
-### 検索エンジンへの登録
+### 検索エンジンへの登録（2026-07-31 完了）
 
-Google Search Console にサイトを登録し、`sitemap.xml` を送信すると検索結果への掲載が早まります。
-登録には Google アカウントでのログインが必要なため、ご自身での作業になります。
+Google Search Console に **「ドメイン」プロパティ**（`lunacaldoacademy.com`）で登録済みです。
+`http` / `https` / `www` あり・なしを1つのプロパティでまとめて扱えます。
+サイトマップも送信済みで、ステータスは「成功しました」（検出ページ数 1）。
 
-独自ドメインを持っているので、**「ドメイン」プロパティ**を選んでください。
-`http` / `https` / `www` あり・なしをまとめて1つのプロパティで扱えるため、
-「URLプレフィックス」で登録するより管理が簡単です。
+所有権の確認は Cloudflare の TXT レコードで行っています。
+
+```
+lunacaldoacademy.com   TXT   google-site-verification=…   Auto
+```
+
+**この TXT レコードは削除しないでください。** 消すと所有権の確認が外れ、
+Search Console のデータが見られなくなります。
+
+#### 登録し直す場合の手順
 
 1. [Google Search Console](https://search.google.com/search-console) を開く
 2. 左の **「ドメイン」** を選び、`lunacaldoacademy.com` を入力
 3. 表示される TXT レコードの値（`google-site-verification=…`）をコピー
 4. Cloudflare → `lunacaldoacademy.com` → **DNS → Records → Add record**
-   - Type: `TXT` / Name: `@` / Content: コピーした値 / TTL: Auto
-5. 保存してから Search Console の「確認」を押す（数分かかることがあります）
-6. 左メニューの「サイトマップ」で `sitemap.xml` と入力して送信
+   - Type: `TXT` / Name: `@` / Content: コピーした値（前後の `"` は付けない） / TTL: Auto
+5. 保存してから Search Console の「確認」を押す
+6. 左メニューの「サイトマップ」で **完全なURL** `https://lunacaldoacademy.com/sitemap.xml` を送信
 
-※ この方法ならサイトのHTMLを触る必要がありません。確認用の TXT レコードは
-**登録後も削除しないでください**（消すと所有権の確認が外れます）。
+※ ドメインプロパティにはURLの前置きがないため、手順6は `sitemap.xml` だけでは
+「サイトマップ アドレスが無効です」となります。必ず `https://` から入力してください。
+
+※ 取得したてのドメインでは、送信直後に「取得できませんでした」と表示されることがあります。
+Google側のDNSキャッシュが切り替わるまでの一時的な状態なので、再送信せずに待てば
+自動的に「成功しました」に変わります。
 
 **内容を大きく更新したら `sitemap.xml` の `<lastmod>` の日付も更新**してください（例: `2026-07-31`）。
 更新頻度を伝える目安になります。
