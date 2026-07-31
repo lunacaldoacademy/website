@@ -282,17 +282,21 @@ git restore .
 git add . && git commit -m "文章を微調整"
 ```
 
-## GitHub Pages への公開
+## 公開の仕組み
 
-**公開済みです。** 初回セットアップ（リポジトリ作成・リモート登録・Pages有効化）は完了しているので、
-以降は下のコマンドだけで更新が反映されます。
+**公開済みです。** カフェサイトと同じ Cloudflare Pages で配信しています。
+`git push` すると Cloudflare が自動でビルド・公開します。
 
 | 項目 | 現在の設定 |
 |---|---|
+| 公開URL | <https://lunacaldoacademy.com/> |
 | リポジトリ | `lunacaldoacademy/website`（Public） |
 | ブランチ | `main` |
-| Pages の Source | `Deploy from a branch` / `main` / `/ (root)` |
-| 公開URL | <https://lunacaldoacademy.com/> |
+| Pages プロジェクト名 | `lunacaldoacademy-site` |
+| 確認用URL | <https://lunacaldoacademy-site.pages.dev/> |
+| ビルド設定 | Framework preset `None` / Build command 空欄 / 出力先 `/` |
+
+ビルド不要の静的サイトなので、リポジトリの中身がそのまま配信されます。
 
 ### 更新のしかた
 
@@ -307,36 +311,61 @@ git add . && git commit -m "内容を更新" && git push
 ```
 
 プッシュしてから実際にサイトへ反映されるまで **1〜2分**かかります。
-反映されないときは、リポジトリの **Actions** タブでデプロイが成功しているか確認してください。
+反映されないときは Cloudflare の **Workers & Pages → lunacaldoacademy-site → Deployments** で
+デプロイが成功しているか確認してください。
 ブラウザにキャッシュが残っている場合は Ctrl+F5 で再読み込みします。
 
-### 独自ドメインの構成（2026-07-31 移行済み）
+### 独自ドメインの構成（2026-07-31 移行）
 
-`github.io` から `lunacaldoacademy.com` へ移行しました。旧URL
-`https://lunacaldoacademy.github.io/website/` は GitHub が自動的に新ドメインへ301転送するため、
-これまでの検索評価は引き継がれます。
+同日に2段階の移行を行いました。
+
+1. `github.io` から独自ドメイン `lunacaldoacademy.com` へ
+2. 配信を GitHub Pages から Cloudflare Pages へ
+
+旧URL `https://lunacaldoacademy.github.io/website/` は GitHub が新ドメインへ301転送します。
+そのため **GitHub Pages の設定は消さずに残してあります**（転送だけを担わせている状態）。
+DNSがGitHubを向かなくなったので GitHub 側は検証エラーを表示しますが、無視して構いません。
 
 | 役割 | 担当 |
 |---|---|
 | ドメイン登録（レジストラ） | Cloudflare Registrar（年 $10.46・自動更新オン） |
 | DNS | Cloudflare（カフェサイトと同一アカウント） |
-| サーバー（配信） | GitHub Pages |
-| SSL証明書 | GitHub Pages が自動発行・自動更新 |
+| サーバー（配信） | Cloudflare Pages |
+| SSL証明書 | Cloudflare が自動発行・自動更新 |
+| 旧URLの転送 | GitHub Pages（`CNAME` ファイルを残しているため機能） |
 
-Cloudflare の DNS レコードは次の2件だけです。
+Cloudflare の DNS レコードは次の2件です。**どちらも Proxied（オレンジの雲）が正しい状態**です。
 
 ```
-lunacaldoacademy.com   CNAME   lunacaldoacademy.github.io   DNS only   Auto
-www                    CNAME   lunacaldoacademy.github.io   DNS only   Auto
+lunacaldoacademy.com   CNAME   lunacaldoacademy-site.pages.dev   Proxied   Auto
+www                    CNAME   lunacaldoacademy-site.pages.dev   Proxied   Auto
 ```
 
-**Proxy status は必ず「DNS only」（グレーの雲）にすること。**
-オレンジ（Proxied）にすると GitHub 側が SSL 証明書を発行・更新できなくなります。
-Cloudflare の管理画面は「Proxying is required...」と Proxied を勧めてきますが、
-GitHub Pages を使っている限りは従わないでください。
-※ カフェサイトは Cloudflare Pages なのでオレンジで正常です。2ドメインで設定が異なります。
+`www` から apex への転送は **Rules → Redirect Rules** の
+「Redirect from WWW to root」（301・クエリ文字列を保持）が担っています。
+カフェサイトと同じ構成です。
 
-ドメインを変える場合は、`CNAME` ファイル（中身はドメイン名1行）と次の22か所の書き換えが必要です。
+**リポジトリの `CNAME` ファイルは削除しないでください。** Cloudflare Pages は使いませんが、
+旧URLの301転送を GitHub Pages に続けさせるために必要です。
+
+### Cloudflare が HTML を書き換える設定について
+
+Proxy（オレンジの雲）を有効にすると、Cloudflare が配信時にHTMLへ手を加えることがあります。
+
+- **Email Address Obfuscation → オフにしました。**
+  `mailto:` リンクを JavaScript 経由の形式に置換する機能です。しかし同じアドレスが
+  構造化データ（JSON-LD）に平文で残るため収集対策にならず、
+  JavaScriptが動かないと連絡先リンクが機能しないという欠点だけが残るため無効化しました。
+  （Security → Settings → Email Address Obfuscation）
+- **Cloudflare Web Analytics → 有効。**
+  `</body>` の直前に計測タグが自動挿入されます。Cookieを使わないため同意バナーは不要です。
+  アクセス状況は Cloudflare の **Analytics → Web Analytics** で見られます。
+
+公開されたHTMLは、この計測タグ1行を除いて `index.html` と完全に一致します。
+
+### ドメインを変える場合
+
+`CNAME` ファイル（中身はドメイン名1行）と次の22か所の書き換えが必要です。
 
 - `index.html` の `canonical` / `og:url` / `og:image` と構造化データ（`@id` `url` `logo` `image`）
 - `sitemap.xml` の `<loc>`
