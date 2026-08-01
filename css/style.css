@@ -995,6 +995,27 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
 .footer__contact { display: grid; gap: var(--s-3); font-size: var(--ts-small); }
 .footer__contact a { color: var(--text-2); text-decoration: none; }
 .footer__contact a:hover { color: var(--gold-lt); }
+/* 姉妹サイト（カフェ・工房）。工房サイトのフッターと同じ並びに揃えている */
+.footer__sites {
+  margin-top: var(--s-6);
+  padding-top: var(--s-5);
+  border-top: 1px solid var(--line-soft);
+}
+.footer__sites-label {
+  margin-bottom: var(--s-4);
+  font-size: var(--ts-tiny);
+  letter-spacing: .16em;
+  color: var(--muted);
+}
+.footer__sites ul { display: grid; gap: var(--s-3); font-size: var(--ts-small); }
+.footer__sites a {
+  color: var(--text-2);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: var(--line);
+  text-underline-offset: .3em;
+}
+.footer__sites a:hover { color: var(--gold-lt); text-decoration-color: currentColor; }
 .footer__bottom {
   padding-top: var(--s-5);
   border-top: 1px solid var(--line-soft);
