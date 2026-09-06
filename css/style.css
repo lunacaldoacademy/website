@@ -965,6 +965,10 @@ html:not(.js) .hero__slide:not(.is-current) { display: none; }
   gap: var(--s-3);
   grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
 }
+/* オンライン予約は最優先の導線なので、他のボタンの上に横いっぱいで置く。
+   ラベルが長いため、列に収めると折り返して読みにくくなる */
+.trial__actions .btn--wide { grid-column: 1 / -1; }
+.trial__note { font-size: var(--ts-tiny); color: var(--muted); margin-top: var(--s-4); }
 
 /* -------------------------------------------------------------
    16. フッター
